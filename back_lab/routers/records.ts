@@ -10,12 +10,13 @@ recordsRouter.get('/', async (req, res) => {
     const result = await mysqlDb.getConnection().query(
         'SELECT * FROM records'
     )
+    console.log(result);
     const records:IRecord[] = result[0] as IRecord[];
 
     if(records.length === 0) {
         return res.status(404).send({error: "No record found"});
     }
-    res.send(records[0]);
+    res.send(records);
 });
 
 

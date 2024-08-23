@@ -57,7 +57,7 @@ locationRouter.delete("/:id", async (req, res) => {
     const id = req.params.id;
 
     const result = await mysqlDb.getConnection().query(
-        'SELECT * FROM record where location_id = ?',
+        'SELECT * FROM records where location_id = ?',
         [id]
     )
     const location_id = result[0] as ICategory[];

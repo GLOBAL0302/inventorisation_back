@@ -56,7 +56,7 @@ categoryRouter.delete("/:id", async (req, res) => {
     const id = req.params.id;
 
     const result = await mysqlDb.getConnection().query(
-        'SELECT * FROM record where category_id = ?',
+        'SELECT * FROM records where category_id = ?',
         [id]
     )
     const category_id = result[0] as ICategory[];
