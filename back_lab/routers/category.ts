@@ -7,7 +7,7 @@ import {ICategory} from "../types";
 const categoryRouter = express.Router();
 
 categoryRouter.get("/", async (req, res) => {
-    const result = await  mysqlDb.getConnection().query(
+    const result = await mysqlDb.getConnection().query(
         'SELECT * FROM category'
     );
     const categories = result[0] as ICategory[];
@@ -21,20 +21,20 @@ categoryRouter.get("/:id", async (req, res) => {
         [id]
     )
     const categories = result[0] as ICategory[];
-    if(categories.length == 0){
+    if (categories.length == 0) {
         res.status(404).send("No category found.");
     }
     res.send(categories[0])
 })
 
 categoryRouter.post("/", async (req, res) => {
-    if(!req.body.title){
+    if (!req.body.title) {
         return res.status(400).send("No title found.");
     }
 
     const newCategory = {
         title: req.body.title,
-        description: req.body.description? req.body.description : "",
+        description: req.body.description ? req.body.description : "",
     }
 
     const insertResult = await mysqlDb.getConnection().query(
@@ -42,7 +42,7 @@ categoryRouter.post("/", async (req, res) => {
         [newCategory.title, newCategory.description],
     )
 
-    const resultHeader =  insertResult[0] as ResultSetHeader;
+    const resultHeader = insertResult[0] as ResultSetHeader;
     const getNewResult = await mysqlDb.getConnection().query(
         'SELECT * FROM category WHERE id = ?',
         [resultHeader.insertId]
@@ -50,6 +50,25 @@ categoryRouter.post("/", async (req, res) => {
 
     const categories = getNewResult[0] as ICategory[];
     return res.send(categories[0])
+})
+
+categoryRouter.delete("/:id", async (req, res) => {
+    const id = req.params.id;
+
+    const result = await mysqlDb.getConnection().query(
+        'SELECT * FROM record where category_id = ?',
+        [id]
+    )
+    const category_id = result[0] as ICategory[];
+    if (category_id[0]) {
+        res.status(404).send("can not delete the bound category");
+    }
+    const deleted =  await mysqlDb.getConnection().query(
+        'DELETE FROM category where id = ?',
+        [id]
+    )
+
+    res.send(`Deleted category by ID ${id}`)
 })
 
 categoryRouter.put("/:id", async (req, res) => {
@@ -61,11 +80,10 @@ categoryRouter.put("/:id", async (req, res) => {
 
     const result = await mysqlDb.getConnection().query(
         'UPDATE category SET title = ?, description = ? WHERE id = ?',
-        [updates.title,updates.description, updates.id],
+        [updates.title, updates.description, updates.id],
     )
     res.send(updates)
 })
-
 
 
 export default categoryRouter;

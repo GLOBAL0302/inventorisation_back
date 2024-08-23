@@ -33,6 +33,7 @@ create table record
         foreign key (location_id) references location (id)
 );
 
+
 insert into category (id, title, description)
 values  (1, 'Мебель', 'предназначен для общего использования'),
         (2, 'Компьютерное оборудование', 'предназначен для общего использования'),
