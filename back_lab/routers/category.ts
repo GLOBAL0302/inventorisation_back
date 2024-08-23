@@ -52,4 +52,20 @@ categoryRouter.post("/", async (req, res) => {
     return res.send(categories[0])
 })
 
+categoryRouter.put("/:id", async (req, res) => {
+    const updates = {
+        id: req.params.id,
+        title: req.body.title,
+        description: req.body.description,
+    }
+
+    const result = await mysqlDb.getConnection().query(
+        'UPDATE category SET title = ?, description = ? WHERE id = ?',
+        [updates.title,updates.description, updates.id],
+    )
+    res.send(updates)
+})
+
+
+
 export default categoryRouter;
